@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+
+# Originally from git@gitlab.met.no:it/arkitektur/demo/codeai.git
 
 
 ## Setup your configuration here. 
 
 # The docs currently need to be in html format or plain text, either from web or from disk. Edit the list with the docs you want.
+
+
+model="llama3:8b"
+embeddings = "mxbai-embed-large:latest"
+
 
 #dataserver = "http://192.168.1.156:8000/"
 dataserver = "http://10.30.1.0:8000/"
@@ -15,29 +21,33 @@ dataserver = "http://10.30.1.0:8000/"
 ollama_service='http://10.30.1.0:11434'
 
 html_refs = [
-                dataserver + "EtiskeretningslinjerforforskningvedMET.html", 
-                dataserver + "RetningslinjeforgrunnsikringavITtjenester.html", 
-                dataserver + "Retningslinjeforreiserv2.1.html",
-                dataserver + "RetningslinjeforITbruker.html"
+            dataserver + "RetningslinjeforgrunnsikringavITtjenester.html",
+            dataserver + "Retningslinjeforinformasjonssikkerhetiprosjek.html",
+            dataserver + "RetningslinjeforITbruker.html",
+            dataserver + "Retningslinjeforlisensieringavkildekodeogprog.html",
+            dataserver + "Retningslinjeforreiserv2.1.html",
+            dataserver + "RetningslinjeforstyrendedokumentervedMET.html",
+            dataserver + "Retningslinjeforvirksomhetsstyring.html"
+
                 ]
 
 # Number of sentences for each chunk of text that gets vectorized/embedded.
 # A smaller chunk size means the embeddings are more precise, while a larger
 # chunk size means that the embeddings may be more general, but can miss fine-grained details
-chunk_size = 2048
-
+#chunk_size = 512
+chunk_size = 13
 # Number of sentences that overlap between chunks.
 # When you chunk data, overlapping a small amount of text between chunks can help preserve context.
 # We recommend starting with an overlap of approximately 10%. For example, given a fixed chunk 
 # size of 256 tokens, you would begin testing with an overlap of 25 tokens.
 
-overlap = 200
-
+#overlap = 50
+overlap = 4
 # Number of chunks to include as context in the prompt.
-prompt_context_chunks = 30
+prompt_context_chunks = 7
 
 # Set True to run query with and without context
-non_context_run = True
+non_context_run = False
 
 # Show context data beforing running the query
 print_context_data = True
@@ -49,8 +59,8 @@ print_context_data = True
 #query = 'Please answer the following in Norwegian. Can you give a short summary version of the guidelines at MET for informasjons security in projects. Please include some references'
 #query = 'Please answer the following in Norwegian. Give me a list of the guidelines/"Retningslinje" at MET("Retningslinjer in Norwegian). Please include some references to original documents. Also please translate the questen I gave you to Norwegian :-)'
 #query = 'Please give me a list of the retningslinjer documents at MET . Add a short summary to each document in the list . Preferably with an URL to each document.'
-query = 'Provide a short version of guidelines for business trips at MET ? Also provide refrences or urls'
-
+query = 'Provide guidelines for business trips at MET . Please answer in Norwegian'
+#query = "Hva er retningslinjene for reiser hos MET ? . Vennligst svar på norsk"
 #query = 'Whats the headlines at https://vg.no today ? '
 #query = 'Please visit https://vg.no and make a short summary of todays headings '
 ##query = 'Kan du gi meg en liste med retningslinjedokmentene på  MET . Vennlist svar på norsk'
@@ -58,10 +68,6 @@ query = 'Provide a short version of guidelines for business trips at MET ? Also 
 #query = "Do you have a summary of a short version of the guidelines for research ethics at MET (Meteorological Institute) in Norwegian ?"
 #query = "Can you give me a short version of the guidelines at MET in norwegian ?"
 # The url to the ollama service you want to use.
-
-
-
-# In[ ]:
 
 
 import os
@@ -137,9 +143,6 @@ def sentences2chunks(sentences:list[str], chunk_size=chunk_size, overlap=overlap
     return [' '.join(chunk) for chunk in chunks]
 
 
-# In[ ]:
-
-
 import ollama
 import chromadb
 
@@ -158,11 +161,10 @@ for html_ref in html_refs:
         html_docs.extend(text_from_files([html_ref]))
 chunks = html2chunks(html_docs)
 
-#model = "mxbai-embed-large:latest"
-model="llama3.1:latest"
+
 # Loop through chunks, vectorize each one, and add them to the vector database.
 for i, d in enumerate(chunks):  
-    response = ollama_client.embeddings(model=model, prompt=d)
+    response = ollama_client.embeddings(model=embeddings, prompt=d)
     #response = ollama_client.embeddings(model="phi3", prompt=d)
 
     embedding = response["embedding"]
@@ -172,14 +174,10 @@ for i, d in enumerate(chunks):
         documents=[d]
     )
 
-
-# In[ ]:
-
-
 # vectorize query and retrieve the most relevant doc
 response = ollama_client.embeddings(
     prompt=query,
-    model=model
+    model=embeddings
 )
 
 results = collection.query(
@@ -196,9 +194,6 @@ if print_context_data:
     print(f"CONTEXT DATA:\n{data}")
 
 
-# In[ ]:
-
-
 #system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are an expert at IT and meteorology at a Meteorological Institute<|eot_id|>"
 system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>I am a chat boot at Meteorologisk institutt (MET.NO) who have read all guidelines at  MET<|eot_id|>"
 
@@ -206,7 +201,7 @@ system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>I am a
 if non_context_run:
     prompt = f"{system_type}.<|start_header_id|>user<|end_header_id|>{query}"
     output = ollama_client.generate(
-        model="llama3:8b",
+        model=model,
         prompt=prompt
     )
     print("WITHOUT CONTEXT DATA:\n")
@@ -216,7 +211,7 @@ if non_context_run:
 # generate a response with context data and prompt.
 prompt = f"{system_type}.<|start_header_id|>user<|end_header_id|>Using this data: {data}. Respond to this prompt: {query}"
 output = ollama_client.generate(
-    model="llama3:8b",
+    model=model,
     prompt=prompt
 )
 print("WITH CONTEXT DATA:\n")

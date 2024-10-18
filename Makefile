@@ -13,8 +13,10 @@ runserver-nogpu:
 runmodel: 
 	docker run --net=host -v /lustre:/lustre -v $(HOME):$(HOME)  -v /home/ollama:/home/ollama  -i -t registry.met.no/modellprod/ollama-container:latest ollama run llama3.1:latest
 
-pullmodel: 
+pullmodels: 
 	docker run --net=host -v /lustre:/lustre -v $(HOME):$(HOME)  -v /home/ollama:/home/ollama  -i -t registry.met.no/modellprod/ollama-container:latest ollama pull llama3.1:latest
+	docker run --net=host -v /lustre:/lustre -v $(HOME):$(HOME)  -v /home/ollama:/home/ollama  -i -t registry.met.no/modellprod/ollama-container:latest ollama pull llama3:8b
+	docker run --net=host -v /lustre:/lustre -v $(HOME):$(HOME)  -v /home/ollama:/home/ollama  -i -t registry.met.no/modellprod/ollama-container:latest ollama pull mxbai-embed-large:latest
 
 sif: dockerimg
 	sudo singularity build ollama-container-latest.sif docker-daemon://registry.met.no/modellprod/ollama-container:latest		
