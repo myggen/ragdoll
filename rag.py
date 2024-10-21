@@ -15,10 +15,10 @@ embeddings = "mxbai-embed-large:latest"
 
 
 #dataserver = "http://192.168.1.156:8000/"
-dataserver = "http://10.30.1.0:8000/"
+dataserver = "http://192.168.1.212:8000/"
 
 #ollama_service = 'https://ollama-test.met.no/'
-ollama_service='http://10.30.1.0:11434'
+ollama_service='http://192.168.1.212:11434'
 
 html_refs = [
             dataserver + "RetningslinjeforgrunnsikringavITtjenester.html",
@@ -59,7 +59,8 @@ print_context_data = True
 #query = 'Please answer the following in Norwegian. Can you give a short summary version of the guidelines at MET for informasjons security in projects. Please include some references'
 #query = 'Please answer the following in Norwegian. Give me a list of the guidelines/"Retningslinje" at MET("Retningslinjer in Norwegian). Please include some references to original documents. Also please translate the questen I gave you to Norwegian :-)'
 #query = 'Please give me a list of the retningslinjer documents at MET . Add a short summary to each document in the list . Preferably with an URL to each document.'
-query = 'Provide guidelines for business trips at MET . Please answer in Norwegian'
+#query = 'Provide guidelines for business trips at MET . Please answer in Norwegian'
+query = 'Hva er retningslinjene for reiser hos MET ? Vennligst svar på norsk språk'
 #query = "Hva er retningslinjene for reiser hos MET ? . Vennligst svar på norsk"
 #query = 'Whats the headlines at https://vg.no today ? '
 #query = 'Please visit https://vg.no and make a short summary of todays headings '
