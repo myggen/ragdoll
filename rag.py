@@ -10,15 +10,17 @@
 # The docs currently need to be in html format or plain text, either from web or from disk. Edit the list with the docs you want.
 
 
-model="llama3:8b"
+#model="llama3:8b"
+model="llama3.1:8b"
 embeddings = "mxbai-embed-large:latest"
+#embeddings = 'multilingual-e5-large'
 
 
 #dataserver = "http://192.168.1.156:8000/"
-dataserver = "http://192.168.1.212:8000/"
+dataserver = "http://10.30.1.0:8000/"
 
 #ollama_service = 'https://ollama-test.met.no/'
-ollama_service='http://192.168.1.212:11434'
+ollama_service='http://10.30.1.0:11434'
 
 html_refs = [
             dataserver + "RetningslinjeforgrunnsikringavITtjenester.html",
@@ -34,20 +36,20 @@ html_refs = [
 # Number of sentences for each chunk of text that gets vectorized/embedded.
 # A smaller chunk size means the embeddings are more precise, while a larger
 # chunk size means that the embeddings may be more general, but can miss fine-grained details
-#chunk_size = 512
-chunk_size = 13
+chunk_size = 512
+#chunk_size = 13
 # Number of sentences that overlap between chunks.
 # When you chunk data, overlapping a small amount of text between chunks can help preserve context.
 # We recommend starting with an overlap of approximately 10%. For example, given a fixed chunk 
 # size of 256 tokens, you would begin testing with an overlap of 25 tokens.
 
-#overlap = 50
-overlap = 4
+overlap = 50
+#overlap = 4
 # Number of chunks to include as context in the prompt.
 prompt_context_chunks = 7
 
 # Set True to run query with and without context
-non_context_run = False
+non_context_run = True
 
 # Show context data beforing running the query
 print_context_data = True
@@ -63,12 +65,10 @@ print_context_data = True
 #query = 'Provide guidelines for business trips at MET in Norwegian language'
 
 #query = 'Provide guidelines for business trips at MET . Please answer in Norwegian'
-query = 'Hva er retningslinjene for reiser hos MET ? Vennligst svar på norsk språk'
-
+#query = 'Hva er retningslinjene for reiser hos MET ? Vennligst svar på norsk språk'
+query = 'Hva er retningslinje for lisensiering av kildekode og programvare hos MET ? Vennligst svar på norsk språk .'
 #query = "Hva er retningslinjene for reiser hos MET ? . Vennligst svar på norsk"
-#query = 'Whats the headlines at https://vg.no today ? '
-#query = 'Please visit https://vg.no and make a short summary of todays headings '
-##query = 'Kan du gi meg en liste med retningslinjedokmentene på  MET . Vennlist svar på norsk'
+
 
 #query = "Do you have a summary of a short version of the guidelines for research ethics at MET (Meteorological Institute) in Norwegian ?"
 #query = "Can you give me a short version of the guidelines at MET in norwegian ?"
@@ -200,7 +200,7 @@ if print_context_data:
 
 
 #system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>You are an expert at IT and meteorology at a Meteorological Institute<|eot_id|>"
-system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>I am a chat boot at Meteorologisk institutt (MET.NO) who have read all guidelines at  MET<|eot_id|>"
+system_type = "<|begin_of_text|><|start_header_id|>system<|end_header_id|>I am a chat boot at Meteorologisk institutt. Meteorologisk institutt is also called MET.NO or MET. I have read all guidelines at MET<|eot_id|>"
 
 # generate a response with just the prompt.
 if non_context_run:
