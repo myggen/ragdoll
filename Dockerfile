@@ -38,9 +38,9 @@ RUN pip install llama_index.llms.ollama
 EXPOSE 11434
 EXPOSE 8000
 ENV OLLAMA_HOST=0.0.0.0
-RUN groupadd -g 999 ollama
+RUN groupadd -g 767 ollama
 
-RUN useradd ollama -r -d /home/ollama -u 999 -g 999 -s /bin/bash
+RUN useradd ollama -r -d /home/ollama -u 767 -g 767 -s /bin/bash
 
 COPY runserver.sh /usr/local/bin/runserver.sh
 
