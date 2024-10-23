@@ -33,7 +33,7 @@ sifshell:
 	singularity exec --bind /lustre:/lustre/,$(HOME):$(HOME) ollama-container-latest.sif /bin/bash
 
 make-runserver-gpu-sif: 
-	singularity exec --bind $HOME/.ollama-vol:/root/.ollama ollama-container-latest.sif --nv runserver.sh
+	singularity exec --bind $(HOME)/.ollama-vol:/root/.ollama ollama-container-latest.sif --nv runserver.sh
 
 open-webui-nogpu: 
 	docker run -p 3000:8080 --add-host=host.docker.internal:host-gateway -v $(HOST_VOL_WEBUI):/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
