@@ -38,13 +38,13 @@ RUN pip install llama_index.llms.ollama
 EXPOSE 11434
 EXPOSE 8000
 ENV OLLAMA_HOST=0.0.0.0
-RUN groupadd -g 767 ollama
+#RUN groupadd -g 767 ollama
 
-RUN useradd ollama -r -d /home/ollama -u 767 -g 767 -s /bin/bash
+#RUN useradd ollama -r -d /home/ollama -u 767 -g 767 -s /bin/bash
 
 COPY runserver.sh /usr/local/bin/runserver.sh
 
-USER ollama
+#USER ollama
 #RUN ollama pull llama3.1:latest
 
 #RUN nohup bash -c "python3 -m http.server --directory /home/espenm/space/projects/data/retningslinjer-met/ &" && sleep 4
